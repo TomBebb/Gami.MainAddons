@@ -23,7 +23,7 @@
 
     <ItemGroup>
       <None Remove="config.toml" />
-      <Resource Include="config.toml" />
+      <EmbeddedResource Include="config.toml" />
     </ItemGroup>
 
 </Project>

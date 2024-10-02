@@ -15,7 +15,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="config.toml" />
       <Resource Include="config.toml" />
     </ItemGroup>
 
