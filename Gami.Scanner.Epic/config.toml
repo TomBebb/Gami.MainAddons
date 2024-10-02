@@ -1,0 +1,8 @@
+key = "epic"
+name = "Epic Games"
+hint = """
+Requires [Legendary](https://github.com/derrod/legendary), the Epic Games manager, to be 
+[installed](https://github.com/derrod/legendary?tab=readme-ov-file#how-to-runinstall).
+
+**Epic** must be authenticated by running `legendary auth` using Powershell on Windows, or Bash on Linux/ Mac OS X.
+"""

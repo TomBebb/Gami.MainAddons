@@ -4,6 +4,9 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Version>0.1.0</Version>
+        <Title>Steam integation for Gami</Title>
+        <Authors>Tom Bebbington &lt;tophattedcoder@gmail.com&gt;</Authors>
     </PropertyGroup>
 
     <ItemGroup>
