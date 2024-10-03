@@ -27,7 +27,8 @@ jobs:
       run: |
           dotnet build --configuration Release
           mkdir -p release
-          cp -rf */bin/Release/net8.0/Gami.{Scanner,Library}*.dll release        
+          cp -rf */bin/Release/net8.0/*.dll release  || true
+          rm release/Gami.Core.dll
           zip -r -9 release release/*
 
     - name: Upload DLLs to release
