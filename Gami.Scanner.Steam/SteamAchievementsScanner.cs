@@ -24,7 +24,7 @@ public sealed class SteamAchievementsScanner : IGameAchievementScanner
     private static readonly JsonSerializerOptions SteamApiJsonSerializerOptions = new(JsonSerializerDefaults.Web);
 
     private readonly AsyncLazy<SteamConfig> _config = new(async () =>
-        await PluginJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName));
+        await AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName));
 
     public string Type => SteamCommon.TypeName;
 

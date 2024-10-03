@@ -13,6 +13,7 @@ using TupleAsJsonArray;
 
 namespace Gami.Library.Gog;
 
+// ReSharper disable once UnusedType.Global
 public sealed class GogLibrary : IGameLibraryAuth, IGameLibraryScanner, IGameLibraryManagement, IGameLibraryLauncher
 {
     private const string ClientId = "46899977096215655";
@@ -32,7 +33,7 @@ public sealed class GogLibrary : IGameLibraryAuth, IGameLibraryScanner, IGameLib
 
     private static readonly HttpClient HttpClient = new();
 
-    private readonly MyConfig _config = PluginJson.Load<MyConfig>("gog") ??
+    private readonly MyConfig _config = AddonJson.Load<MyConfig>("gog") ??
                                         new MyConfig();
 
     public string Type => "gog";
@@ -218,7 +219,7 @@ public sealed class GogLibrary : IGameLibraryAuth, IGameLibraryScanner, IGameLib
     private ValueTask<GameDetails> GetGameDetails(string id) =>
         GetAuthJson<GameDetails>("https://embed.gog.com/account/gameDetails/".AppendPathSegment($"{id}.json"));
 
-    private ValueTask SaveConfig() => PluginJson.Save(_config, "gog");
+    private ValueTask SaveConfig() => AddonJson.Save(_config, "gog");
 
     private async ValueTask ProcessTokenUrl(string url)
     {

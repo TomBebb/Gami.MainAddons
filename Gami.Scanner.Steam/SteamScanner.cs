@@ -36,7 +36,7 @@ public sealed class SteamScanner : IGameLibraryScanner
     private static readonly string AppsImageCachePath = Path.Join(BasePath, "appcache/librarycache");
 
     private readonly AsyncLazy<SteamConfig> _config = new(() =>
-        PluginJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName).AsTask());
+        AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName).AsTask());
 
     private ImmutableArray<OwnedGame>? _cachedGames;
 
