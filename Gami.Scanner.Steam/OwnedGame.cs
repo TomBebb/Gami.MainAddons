@@ -14,6 +14,7 @@ public sealed class OwnedGame
     public string Name { get; set; } = "";
 
     public long PlaytimeForever { get; set; }
+    public long RtimeLastPlayed { get; set; }
 
     public string ImgIconUrl { get; set; } = "";
 }

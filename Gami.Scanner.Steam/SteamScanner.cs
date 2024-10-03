@@ -50,12 +50,13 @@ public sealed class SteamScanner : IGameLibraryScanner
         Log.Debug("Got owned games: {Total}", ownedGames.Length);
         var installed = ScanInstalled()
             .ToFrozenDictionary(lib => long.Parse(lib.LibraryId), lib => lib.InstallStatus);
-
+        
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach (var game in ownedGames)
         {
             var gameRef = new ScannedGameLibraryMetadata
             {
+                LastPlayed = game.RtimeLastPlayed == 0 ? null : DateTime.UnixEpoch.AddSeconds(game.RtimeLastPlayed),
                 Playtime = TimeSpan.FromMinutes(game.PlaytimeForever),
                 InstallStatus = installed.GetValueOrDefault(game.AppId, GameInstallStatus.InLibrary),
                 LibraryId = game.AppId.ToString(),
@@ -181,12 +182,15 @@ public sealed class SteamScanner : IGameLibraryScanner
         var bytesDl = data["BytesDownloaded"]?.ToString(CultureInfo.InvariantCulture);
         Log.Debug("Raw BytesDownloaded: {AppId}", bytesDl);
 
+        var lastPlayedRaw = data["LastPlayed"]?.ToString(CultureInfo.InvariantCulture);     
+        var lastPlayedInt = int.Parse(lastPlayedRaw ?? "0", CultureInfo.InvariantCulture);
         var mapped = new SteamLocalLibraryMetadata
         {
             LibraryType = SteamCommon.TypeName,
             LibraryId = appId,
             Name = name,
             InstallDir = installDir,
+            LastPlayed = lastPlayedInt == 0 ? null  : DateTime.UnixEpoch.AddSeconds(lastPlayedInt),
 
             InstallStatus = bytesDl == null
                 ? GameInstallStatus.Queued
