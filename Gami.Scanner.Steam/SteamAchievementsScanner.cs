@@ -9,7 +9,6 @@ using System.Text.Json.Serialization;
 using Flurl;
 using Gami.Core;
 using Gami.Core.Models;
-using Nito.AsyncEx;
 using Serilog;
 
 namespace Gami.Scanner.Steam;
@@ -23,8 +22,8 @@ public sealed class SteamAchievementsScanner : IGameAchievementScanner
 {
     private static readonly JsonSerializerOptions SteamApiJsonSerializerOptions = new(JsonSerializerDefaults.Web);
 
-    private readonly AsyncLazy<SteamConfig> _config = new(async () =>
-        await AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName));
+    private readonly Lazy<SteamConfig> _config = new( () =>
+         AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName).Result);
 
     public string Type => SteamCommon.TypeName;
 
@@ -80,12 +79,11 @@ public sealed class SteamAchievementsScanner : IGameAchievementScanner
     private async ValueTask<PlayerAchievementsResults> GetPlayerAchievements
         (IGameLibraryRef game)
     {
-        var config = await _config.Task;
         var url =
             "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
                 .AppendQueryParam("appid", game.LibraryId)
-                .AppendQueryParam("key", config.ApiKey)
-                .AppendQueryParam("steamid", config.SteamId);
+                .AppendQueryParam("key", _config.Value.ApiKey)
+                .AppendQueryParam("steamid", _config.Value.SteamId);
 
         Log.Debug("Fetch playerachievements for {GameId}", url);
         try
@@ -117,7 +115,7 @@ public sealed class SteamAchievementsScanner : IGameAchievementScanner
     private async ValueTask<GameSchemaResult?> GetGameAchievements
         (IGameLibraryRef game)
     {
-        var config = await _config.Task;
+        var config = _config.Value;
         var url =
             "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/"
                 .AppendQueryParam("appid", game.LibraryId)

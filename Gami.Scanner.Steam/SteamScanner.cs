@@ -6,7 +6,6 @@ using System.Text.Json;
 using Flurl;
 using Gami.Core;
 using Gami.Core.Models;
-using Nito.AsyncEx;
 using Serilog;
 using ValveKeyValue;
 
@@ -35,8 +34,8 @@ public sealed class SteamScanner : IGameLibraryScanner
 
     private static readonly string AppsImageCachePath = Path.Join(BasePath, "appcache/librarycache");
 
-    private readonly AsyncLazy<SteamConfig> _config = new(() =>
-        AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName).AsTask());
+    private readonly Lazy<SteamConfig> _config = new(() =>
+        AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName).Result);
 
     private ImmutableArray<OwnedGame>? _cachedGames;
 
@@ -88,7 +87,7 @@ public sealed class SteamScanner : IGameLibraryScanner
         if (_cachedGames.HasValue && !forceRefresh)
             return _cachedGames.Value;
         Log.Debug("Scan owned steam games: get conf");
-        var config = await _config.Task.ConfigureAwait(false);
+        var config = _config.Value;
         Log.Debug("Scan owned steam games: got cnof");
         var client = HttpConsts.HttpClient;
         var url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/"
