@@ -7,6 +7,8 @@
         <Version>0.1.0</Version>
         <Title>Epic Gami Addon</Title>
         <Authors>Tom Bebbington &lt;tophattedcoder@gmail.com&gt;</Authors>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+
     </PropertyGroup>
 
     <ItemGroup>
