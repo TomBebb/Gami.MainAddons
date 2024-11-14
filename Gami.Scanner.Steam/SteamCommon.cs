@@ -9,12 +9,6 @@ namespace Gami.Scanner.Steam;
 public sealed class SteamCommon : IGameLibraryLauncher, IGameLibraryManagement
 {
     public const string TypeName = "steam";
-
-    // TODO: Support flatpak, read from registry on windows
-    private static readonly string SteamPath =
-        OperatingSystem.IsWindows() ? "C:/Program Files (x86)/Steam/steam.exe" : "steam";
-
-
     public string Type => "steam";
 
     public void Launch(IGameLibraryRef gameRef) =>
