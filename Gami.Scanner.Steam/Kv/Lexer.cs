@@ -13,15 +13,15 @@ public static class Lexer
     private record struct LexTextState(int Line, int Column, StringBuilder Text);
 
 
-    public static IAsyncEnumerable<Ast.Span<Token>> LexKv(this Stream s) => new StreamReader(s).LexKv();
+    public static IAsyncEnumerable<Spanned<Token>> LexKv(this Stream s) => new StreamReader(s).LexKv();
 
-    public static async IAsyncEnumerable<Ast.Span<Token>> LexKv(this StreamReader sr)
+    public static async IAsyncEnumerable<Spanned<Token>> LexKv(this StreamReader sr)
     {
         var buffer = new Memory<char>(new char[1024]);
         int charsRead, line = 1, column = 1;
 
-        Ast.Span<Token> AutoPos(Token token) => new(token, line, column, column);
-        Ast.Span<Token> AutoPosBasic(TokenType token) => AutoPos(new Token(token));
+        Spanned<Token> AutoPos(Token token) => new(token, line, column, column);
+        Spanned<Token> AutoPosBasic(TokenType token) => AutoPos(new Token(token));
 
         LexTextState? textState = null;
         do
@@ -34,7 +34,7 @@ public static class Lexer
                 {
                     var state = textState.Value;
                     if (ch == '"')
-                        yield return new Ast.Span<Token>(new Token(TokenType.String, state.Text.ToString()),
+                        yield return new Spanned<Token>(new Token(TokenType.String, state.Text.ToString()),
                             state.Line,
                             state.Column, state.Column + 2 + state.Text.Length);
                     else

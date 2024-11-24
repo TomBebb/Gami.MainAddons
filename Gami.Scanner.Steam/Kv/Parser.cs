@@ -4,7 +4,7 @@ namespace Gami.Scanner.Steam.Kv;
 
 public static class Parser
 {
-    public static async ValueTask ParseKv(this IAsyncEnumerator<Ast.Span<Token>> tks)
+    public static async ValueTask ParseKv(this IAsyncEnumerator<Spanned<Token>> tks)
     {
     }
 }

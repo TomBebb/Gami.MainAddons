@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Gami.Scanner.Steam.Kv.Ast;
 
-public readonly record struct Span<T>(T Value, int Line, int StartColumn, int EndColumn)
+public readonly record struct Spanned<T>(T Value, int Line, int StartColumn, int EndColumn)
 {
     public override string ToString()
     {

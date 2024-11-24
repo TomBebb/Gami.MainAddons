@@ -7,22 +7,22 @@ namespace Kv.Test;
 
 public class LexTests
 {
-    private static ValueTask<ImmutableArray<Gami.Scanner.Steam.Kv.Ast.Span<Token>>> LexAll(string text)
+    private static ValueTask<ImmutableArray<Spanned<Token>>> LexAll(string text)
     {
         var textStream = new MemoryStream(Encoding.UTF8.GetBytes(text));
         using var streamReader = new StreamReader(textStream);
         return LexAll(streamReader);
     }
 
-    private static async ValueTask<ImmutableArray<Gami.Scanner.Steam.Kv.Ast.Span<Token>>> LexAll(StreamReader s)
+    private static async ValueTask<ImmutableArray<Spanned<Token>>> LexAll(StreamReader s)
     {
-        var tokens = ImmutableArray.CreateBuilder<Gami.Scanner.Steam.Kv.Ast.Span<Token>>();
+        var tokens = ImmutableArray.CreateBuilder<Spanned<Token>>();
         await foreach (var token in s.LexKv()) tokens.Add(token);
 
         return tokens.ToImmutable();
     }
 
-    private static async ValueTask<Gami.Scanner.Steam.Kv.Ast.Span<Token>> LexSingle(string input)
+    private static async ValueTask<Spanned<Token>> LexSingle(string input)
     {
         var textStream = new MemoryStream(Encoding.UTF8.GetBytes(input));
         var lexer = textStream.LexKv().GetAsyncEnumerator();
@@ -38,7 +38,7 @@ public class LexTests
         const string input = "\"Demo\"";
         var res = await LexSingle(input);
         Assert.That(res,
-            Is.EqualTo(new Gami.Scanner.Steam.Kv.Ast.Span<Token>(new Token(TokenType.String, "Demo"), 1, 1, 7)));
+            Is.EqualTo(new Spanned<Token>(new Token(TokenType.String, "Demo"), 1, 1, 7)));
     }
 
     [Test]
@@ -47,7 +47,7 @@ public class LexTests
         const string input = "{";
         var res = await LexSingle(input);
         Assert.That(res,
-            Is.EqualTo(new Gami.Scanner.Steam.Kv.Ast.Span<Token>(new Token(TokenType.StartObject), 1, 1, 1)));
+            Is.EqualTo(new Spanned<Token>(new Token(TokenType.StartObject), 1, 1, 1)));
     }
 
     [Test]
@@ -56,7 +56,7 @@ public class LexTests
         const string input = "}";
         var res = await LexSingle(input);
         Assert.That(res,
-            Is.EqualTo(new Gami.Scanner.Steam.Kv.Ast.Span<Token>(new Token(TokenType.EndObject), 1, 1, 1)));
+            Is.EqualTo(new Spanned<Token>(new Token(TokenType.EndObject), 1, 1, 1)));
     }
 
     [Test]
@@ -66,8 +66,17 @@ public class LexTests
         var res = await LexAll(input);
         Assert.That(res, Is.EqualTo(new[]
         {
-            new Gami.Scanner.Steam.Kv.Ast.Span<Token>(new Token(TokenType.StartObject), 1, 1, 1),
-            new Gami.Scanner.Steam.Kv.Ast.Span<Token>(new Token(TokenType.EndObject), 1, 2, 2)
+            new Spanned<Token>(new Token(TokenType.StartObject), 1, 1, 1),
+            new Spanned<Token>(new Token(TokenType.EndObject), 1, 2, 2)
         }));
+    }
+
+    [Test]
+    public async ValueTask TestOffsetStartObject()
+    {
+        const string input = "   {";
+        var res = await LexSingle(input);
+        Assert.That(res, Is.EqualTo(
+            new Spanned<Token>(new Token(TokenType.StartObject), 1, 4, 4)));
     }
 }
