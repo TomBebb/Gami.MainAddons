@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gami.Scanner.Epic", "Gami.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gami.Library.Gog", "Gami.Library.Gog\Gami.Library.Gog.csproj", "{9B8AB9AE-EB11-415F-8A8A-681F1E5085FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kv.Test", "Kv.Test\Kv.Test.csproj", "{95262D93-5DB9-47FF-A711-024E06AD4800}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{9B8AB9AE-EB11-415F-8A8A-681F1E5085FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9B8AB9AE-EB11-415F-8A8A-681F1E5085FF}.Debug|Any CPU.ActiveCfg = Release|Any CPU
 		{9B8AB9AE-EB11-415F-8A8A-681F1E5085FF}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{95262D93-5DB9-47FF-A711-024E06AD4800}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95262D93-5DB9-47FF-A711-024E06AD4800}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95262D93-5DB9-47FF-A711-024E06AD4800}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95262D93-5DB9-47FF-A711-024E06AD4800}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
