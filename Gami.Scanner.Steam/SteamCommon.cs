@@ -36,7 +36,7 @@ public sealed class SteamCommon : IGameLibraryLauncher, IGameLibraryManagement
     private static void RunGameCmd(string cmd, string id)
     {
         var info = new ProcessStartInfo
-            { FileName = $"steam://{cmd}/{id}", UseShellExecute = true };
+        { FileName = $"steam://{cmd}/{id}", UseShellExecute = true };
         new Process { StartInfo = info }.Start();
     }
 }

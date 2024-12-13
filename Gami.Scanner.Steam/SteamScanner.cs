@@ -19,6 +19,32 @@ public class SteamLocalLibraryMetadata : ScannedGameLibraryMetadata
     public string InstallDir { get; init; } = null!;
 }
 
+[Flags]
+public enum AppStateFlags
+{
+    Uninstalled = 1,
+    UpdateRequired = 2,
+    FullyInstalled = 4,
+    Encrypted = 8,
+    Locked = 16,
+    FilesMissing = 32,
+    AppRunning = 64,
+    FilesCorrupt = 128,
+    UpdateRunning = 256,
+    UpdatePaused = 512,
+    UpdateStarted = 1024,
+    Uninstalling = 2048,
+    BackupRunning = 4096,
+    Reconfiguring = 65536,
+    Validating = 131072,
+    AddingFiles = 262144,
+    Preallocating = 524288,
+    Downloading = 1048576,
+    Staging = 2097152,
+    Committing = 4194304,
+    UpdateStopping = 8388608
+}
+
 public sealed class SteamScanner : IGameLibraryScanner
 {
     private static readonly string BasePath = OperatingSystem.IsMacCatalyst() || OperatingSystem.IsMacOS()
@@ -50,7 +76,7 @@ public sealed class SteamScanner : IGameLibraryScanner
         Log.Debug("Got owned games: {Total}", ownedGames.Length);
         var installed = ScanInstalled()
             .ToFrozenDictionary(lib => long.Parse(lib.LibraryId), lib => lib.InstallStatus);
-        
+
         // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
         foreach (var game in ownedGames)
         {
@@ -182,21 +208,23 @@ public sealed class SteamScanner : IGameLibraryScanner
         var bytesDl = data["BytesDownloaded"]?.ToString(CultureInfo.InvariantCulture);
         Log.Debug("Raw BytesDownloaded: {AppId}", bytesDl);
 
-        var lastPlayedRaw = data["LastPlayed"]?.ToString(CultureInfo.InvariantCulture);     
+        var lastPlayedRaw = data["LastPlayed"]?.ToString(CultureInfo.InvariantCulture);
         var lastPlayedInt = int.Parse(lastPlayedRaw ?? "0", CultureInfo.InvariantCulture);
+
+        var rawState = data["StateFlags"]?.ToInt32(CultureInfo.CurrentCulture);
+        var state = (AppStateFlags)rawState;
+
         var mapped = new SteamLocalLibraryMetadata
         {
             LibraryType = SteamCommon.TypeName,
             LibraryId = appId,
             Name = name,
             InstallDir = installDir,
-            LastPlayed = lastPlayedInt == 0 ? null  : DateTime.UnixEpoch.AddSeconds(lastPlayedInt),
+            LastPlayed = lastPlayedInt == 0 ? null : DateTime.UnixEpoch.AddSeconds(lastPlayedInt),
 
-            InstallStatus = bytesDl == null
-                ? GameInstallStatus.Queued
-                : bytesDl == bytesToDl
-                    ? GameInstallStatus.Installed
-                    : GameInstallStatus.Installing
+            InstallStatus = (state & AppStateFlags.Uninstalling) != 0 ? GameInstallStatus.Uninstalling : 
+                ((state & (AppStateFlags.Downloading | AppStateFlags.Committing | AppStateFlags.Preallocating | AppStateFlags.Staging | AppStateFlags.Reconfiguring | AppStateFlags.Validating)) != 0 ? GameInstallStatus.Installing : GameInstallStatus.Installed)
+
         };
 
         Log.Debug("Mapped bytes: {Mapped}", JsonSerializer.Serialize(mapped));
