@@ -155,7 +155,8 @@ public sealed class GogLibrary : IGameLibraryAuth, IGameLibraryScanner, IGameLib
                 LibraryId = gameId,
                 InstallStatus = await CheckInstallStatus(new GameLibraryRef
                 {
-                    LibraryType = Type, LibraryId =
+                    LibraryType = Type,
+                    LibraryId =
                         gameId,
                     Name = game.Title
                 })
