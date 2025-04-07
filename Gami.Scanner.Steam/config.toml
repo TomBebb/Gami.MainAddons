@@ -5,8 +5,3 @@ name = "Steam Scanner / Store"
 name = "Steam API key"
 key = "apiKey"
 hint = "Obtain from [Steam API Dev page](https://steamcommunity.com/dev/apikey)"
-
-[[settings]]
-name = "SteamID"
-key = "steamId"
-hint = "In decimal format. Obtain from [an online tool](https://www.steamidfinder.com)"

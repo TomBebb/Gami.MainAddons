@@ -56,10 +56,21 @@ public sealed class SteamScanner : IGameLibraryScanner
                 "Steam")
             : @"C:\Program Files (x86)\Steam";
 
+    public static readonly string UsersConfPath = Path.Join(BasePath, "config/loginusers.vdf");
 
     public static readonly string AppsPath = Path.Join(BasePath, "steamapps");
 
     private static readonly string AppsImageCachePath = Path.Join(BasePath, "appcache/librarycache");
+
+    public static Lazy<string> SteamId = new Lazy<string>(() =>
+    {
+        var stream = File.OpenRead(UsersConfPath);
+        Log.Debug("MapGame Opened stream {Path}", UsersConfPath);
+        var kv = KVSerializer.Create(KVSerializationFormat.KeyValues1Text);
+        Log.Debug("MapGame created deserializer {Path}", UsersConfPath);
+        KVObject data = kv.Deserialize(stream);
+        return data.Select(v => v.Value.ToString()).FirstOrDefault();
+    });
 
     private readonly AsyncLazy<SteamConfig> _config = new(() =>
         AddonJson.LoadOrErrorAsync<SteamConfig>(SteamCommon.TypeName).AsTask());
@@ -120,7 +131,7 @@ public sealed class SteamScanner : IGameLibraryScanner
         var client = HttpConsts.HttpClient;
         var url = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/"
             .SetQueryParam("key", config.ApiKey)
-            .SetQueryParam("steamid", config.SteamId)
+            .SetQueryParam("steamid", SteamId.Value)
             .SetQueryParam("include_appinfo", 1)
             .SetQueryParam("format", "json");
         Log.Debug("Steam scanning player owned games: {Url}", url);
@@ -222,9 +233,12 @@ public sealed class SteamScanner : IGameLibraryScanner
             InstallDir = installDir,
             LastPlayed = lastPlayedInt == 0 ? null : DateTime.UnixEpoch.AddSeconds(lastPlayedInt),
 
-            InstallStatus = (state & AppStateFlags.Uninstalling) != 0 ? GameInstallStatus.Uninstalling : 
-                ((state & (AppStateFlags.Downloading | AppStateFlags.Committing | AppStateFlags.Preallocating | AppStateFlags.Staging | AppStateFlags.Reconfiguring | AppStateFlags.Validating)) != 0 ? GameInstallStatus.Installing : GameInstallStatus.Installed)
-
+            InstallStatus = (state & AppStateFlags.Uninstalling) != 0
+                ? GameInstallStatus.Uninstalling
+                : ((state & (AppStateFlags.Downloading | AppStateFlags.Committing | AppStateFlags.Preallocating |
+                             AppStateFlags.Staging | AppStateFlags.Reconfiguring | AppStateFlags.Validating)) != 0
+                    ? GameInstallStatus.Installing
+                    : GameInstallStatus.Installed)
         };
 
         Log.Debug("Mapped bytes: {Mapped}", JsonSerializer.Serialize(mapped));

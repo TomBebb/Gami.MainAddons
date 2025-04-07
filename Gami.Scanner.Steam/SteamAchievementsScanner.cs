@@ -85,7 +85,7 @@ public sealed class SteamAchievementsScanner : IGameAchievementScanner
             "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/"
                 .AppendQueryParam("appid", game.LibraryId)
                 .AppendQueryParam("key", config.ApiKey)
-                .AppendQueryParam("steamid", config.SteamId);
+                .AppendQueryParam("steamid", SteamScanner.SteamId.Value);
 
         Log.Debug("Fetch playerachievements for {GameId}", url);
         try
