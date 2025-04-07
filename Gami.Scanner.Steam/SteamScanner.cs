@@ -64,12 +64,9 @@ public sealed class SteamScanner : IGameLibraryScanner
 
     public static Lazy<string> SteamId = new Lazy<string>(() =>
     {
-        var stream = File.OpenRead(UsersConfPath);
-        Log.Debug("MapGame Opened stream {Path}", UsersConfPath);
-        var kv = KVSerializer.Create(KVSerializationFormat.KeyValues1Text);
-        Log.Debug("MapGame created deserializer {Path}", UsersConfPath);
-        KVObject data = kv.Deserialize(stream);
-        return data.Select(v => v.Value.ToString()).FirstOrDefault();
+        var content = File.ReadAllText(UsersConfPath);
+        Log.Debug("MapGame Done reading {Path}", UsersConfPath);
+        return content.Split('"')[3];
     });
 
     private readonly AsyncLazy<SteamConfig> _config = new(() =>
