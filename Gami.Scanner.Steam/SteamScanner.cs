@@ -56,13 +56,13 @@ public sealed class SteamScanner : IGameLibraryScanner
                 "Steam")
             : @"C:\Program Files (x86)\Steam";
 
-    public static readonly string UsersConfPath = Path.Join(BasePath, "config/loginusers.vdf");
+    private static readonly string UsersConfPath = Path.Join(BasePath, "config/loginusers.vdf");
 
     public static readonly string AppsPath = Path.Join(BasePath, "steamapps");
 
     private static readonly string AppsImageCachePath = Path.Join(BasePath, "appcache/librarycache");
 
-    public static Lazy<string> SteamId = new Lazy<string>(() =>
+    public static readonly Lazy<string> SteamId = new(() =>
     {
         var content = File.ReadAllText(UsersConfPath);
         Log.Debug("MapGame Done reading {Path}", UsersConfPath);
@@ -220,7 +220,7 @@ public sealed class SteamScanner : IGameLibraryScanner
         var lastPlayedInt = int.Parse(lastPlayedRaw ?? "0", CultureInfo.InvariantCulture);
 
         var rawState = data["StateFlags"]?.ToInt32(CultureInfo.CurrentCulture);
-        var state = (AppStateFlags)rawState;
+        var state = (AppStateFlags)rawState!;
 
         var mapped = new SteamLocalLibraryMetadata
         {
